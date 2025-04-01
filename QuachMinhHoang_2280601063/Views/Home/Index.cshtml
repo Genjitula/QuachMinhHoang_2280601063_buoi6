@@ -1,0 +1,317 @@
+﻿@* @{ *@
+@*         ViewData["Title"] = "Danh sách sản phẩm"; *@
+@* } *@
+
+@*     <h2>Danh sách Sản phẩm</h2> *@
+
+@*     <!-- Form thêm/sửa sản phẩm --> *@
+@*     <input type="hidden" id="productId"> *@
+@*     <input type="text" id="productName" placeholder="Tên sản phẩm"> *@
+@*     <input type="number" id="productPrice" placeholder="Giá"> *@
+@*     <button onclick="addProduct()">Thêm</button> *@
+@*     <button onclick="updateProduct()">Cập nhật</button> *@
+
+@*     <!-- Bảng hiển thị sản phẩm --> *@
+@*     <table border="1"> *@
+@*         <thead> *@
+@*             <tr> *@
+@*                 <th>ID</th> *@
+@*                 <th>Tên Sản Phẩm</th> *@
+@*                 <th>Giá</th> *@
+@*                 <th>Hành động</th> *@
+@*             </tr> *@
+@*         </thead> *@
+@*         <tbody id="productTable"></tbody> *@
+@*     </table> *@
+
+@*     <!-- Nhúng file JavaScript --> *@
+@*     <script src="~/js/product.js"></script> *@
+@* </div> *@
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="text-primary mb-0">Danh sách Sản phẩm</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Thông tin sản phẩm</h5>
+                </div>
+                <div class="card-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="productName" placeholder="Nhập tên sản phẩm" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productPrice" class="form-label">Giá <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">₫</span>
+                                <input type="number" class="form-control" id="productPrice" placeholder="Nhập giá sản phẩm" required>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary" onclick="addProduct()">
+                                <i class="bi bi-plus-circle me-1"></i> Thêm
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="updateProduct()">
+                                <i class="bi bi-pencil-square me-1"></i> Cập nhật
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Làm mới
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Danh sách sản phẩm</h5>
+                    <div class="input-group input-group-sm w-25">
+                        <input type="text" class="form-control" id="searchProduct" placeholder="Tìm kiếm sản phẩm...">
+                        <button class="btn btn-light" type="button" id="searchButton">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="text-center" style="width: 60px;">ID</th>
+                                    <th scope="col">Tên Sản Phẩm</th>
+                                    <th scope="col" style="width: 120px;">Giá</th>
+                                    <th scope="col" class="text-center" style="width: 180px;">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTable">
+                                <!-- Dữ liệu sản phẩm sẽ được hiển thị ở đây -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Sau</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xem chi tiết sản phẩm -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th style="width: 120px;">ID</th>
+                            <td id="modalId"></td>
+                        </tr>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <td id="modalName"></td>
+                        </tr>
+                        <tr>
+                            <th>Giá</th>
+                            <td id="modalPrice"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="modalEditButton">Chỉnh sửa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Bạn có chắc chắn muốn xóa sản phẩm <strong id="deleteProductName"></strong>?</p>
+                <p class="text-danger mb-0 mt-2">Hành động này không thể hoàn tác.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Nhúng file JavaScript -->
+<script src="~/js/product.js"></script>
+
+<!-- Đoạn mã JavaScript bổ sung -->
+<script>
+    // Thêm biến toàn cục để lưu ID sản phẩm cần xóa
+    let deleteProductId = null;
+    let productToDelete = null;
+    let currentProducts = [];
+    const productDetailModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+    const deleteModalElement = document.getElementById('deleteModal');
+    const deleteModal = new bootstrap.Modal(deleteModalElement);
+
+    // Hàm xóa form
+    function resetForm() {
+        document.getElementById('productForm').reset();
+        document.getElementById('productId').value = '';
+        updatePreview();
+    }
+
+    // Cập nhật xem trước sản phẩm
+    function updatePreview() {
+        const name = document.getElementById('productName').value || 'Tên sản phẩm';
+        const price = document.getElementById('productPrice').value || 0;
+        const stock = document.getElementById('productStock').value || 0;
+
+        document.getElementById('previewName').textContent = name;
+        document.getElementById('previewPrice').textContent = `₫${Number(price).toLocaleString('vi-VN')}`;
+    }
+
+    // Lắng nghe sự kiện input để cập nhật xem trước
+    document.getElementById('productName').addEventListener('input', updatePreview);
+    document.getElementById('productPrice').addEventListener('input', updatePreview);
+    document.getElementById('productStock').addEventListener('input', updatePreview);
+
+    // Xử lý tìm kiếm sản phẩm
+    document.getElementById('searchProduct').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+
+        if (searchTerm === '') {
+            displayProducts(currentProducts);
+            return;
+        }
+
+        const filteredProducts = currentProducts.filter(product =>
+            product.name.toLowerCase().includes(searchTerm) ||
+            product.id.toString().includes(searchTerm) ||
+            product.price.toString().includes(searchTerm)
+        );
+
+        displayProducts(filteredProducts);
+    });
+
+    // Xử lý nút tìm kiếm
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const searchInput = document.getElementById('searchProduct');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        if (searchTerm === '') {
+            displayProducts(currentProducts);
+            return;
+        }
+
+        const filteredProducts = currentProducts.filter(product =>
+            product.name.toLowerCase().includes(searchTerm) ||
+            product.id.toString().includes(searchTerm) ||
+            product.price.toString().includes(searchTerm)
+        );
+
+        displayProducts(filteredProducts);
+    });
+
+    // Xác nhận xóa sản phẩm
+    document.getElementById('confirmDelete').addEventListener('click', async function() {
+        if (deleteProductId) {
+            await deleteProduct(deleteProductId);
+            deleteModal.hide();
+        }
+    });
+
+    // Xử lý nút chỉnh sửa trong modal chi tiết
+    document.getElementById('modalEditButton').addEventListener('click', function() {
+        productDetailModal.hide();
+        // Form đã được điền sẵn bởi hàm viewProductDetails
+    });
+
+   
+
+    // Hàm hiển thị danh sách sản phẩm
+    function displayProducts(products) {
+        const tableBody = document.getElementById('productTable');
+        tableBody.innerHTML = '';
+
+        if (products.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-3">Không có sản phẩm nào</td></tr>`;
+            document.getElementById('totalProducts').textContent = 0;
+            return;
+        }
+
+        products.forEach(product => {
+            let row = `<tr>
+                <td class="text-center">${product.id}</td>
+                <td>${product.name}</td>
+                <td class="text-end">₫${Number(product.price).toLocaleString('vi-VN')}</td>
+                <td class="text-center">${product.stockQuantity || 0}</td>
+                <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-info text-white" title="Xem chi tiết" onclick="viewProductDetails(${product.id})">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-warning text-white" title="Sửa" onclick="editProduct(${product.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger" title="Xóa" onclick="confirmDelete(${product.id}, '${product.name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+
+        document.getElementById('totalProducts').textContent = products.length;
+    }
+
+    // Hàm xác nhận xóa
+    function confirmDelete(id, name) {
+        deleteProductId = id;
+        document.getElementById('deleteProductName').textContent = name;
+        deleteModal.show();
+    }
+</script>
